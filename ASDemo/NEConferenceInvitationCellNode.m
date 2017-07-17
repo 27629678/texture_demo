@@ -30,12 +30,14 @@
 - (instancetype)initWithDate:(NSString *)date location:(NSString *)location status:(NSUInteger)status
 {
     if (self = [super init]) {
-        location = [NSString stringWithFormat:@"%@-%@", location, location];
+        NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+        UIFont *font = [UIFont systemFontOfSize:18 weight:UIFontWeightLight];
+        NSDictionary *attr = @{ NSFontAttributeName: font, NSParagraphStyleAttributeName: style };
         
         self.status = status;
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.date.attributedText = [[NSAttributedString alloc] initWithString:date];
-        self.location.attributedText = [[NSAttributedString alloc] initWithString:location];
+        self.date.attributedText = [[NSAttributedString alloc] initWithString:date attributes:attr];
+        self.location.attributedText = [[NSAttributedString alloc] initWithString:location attributes:attr];
     }
     
     return self;
@@ -88,9 +90,13 @@
     spec.background = background_spec;
     
     // date
+    self.date.style.maxWidth = ASDimensionMake(constrainedSize.max.width - 60);
+    ASStackLayoutSpec *date_icon_ver_spec = [ASStackLayoutSpec verticalStackLayoutSpec];
+    date_icon_ver_spec.child = self.date_icon;
+    
     ASInsetLayoutSpec *date_icon_spec =
-    [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(10, 10, 10, 10)
-                                           child:self.date_icon];
+    [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15, 10, 10, 0)
+                                           child:date_icon_ver_spec];
     ASInsetLayoutSpec *date_text_spec =
     [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(10, 10, 10, 10)
                                            child:self.date];
@@ -99,15 +105,18 @@
     date_spec.children = @[date_icon_spec, date_text_spec];
     
     // location
+    self.location.style.maxWidth = ASDimensionMake(constrainedSize.max.width - 60);
     ASInsetLayoutSpec *location_icon_spec =
-    [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(10, 10, 10, 10)
+    [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15, 10, 10, 0)
                                            child:self.location_icon];
+    ASStackLayoutSpec *ver = [ASStackLayoutSpec verticalStackLayoutSpec];
+    ver.children =  @[location_icon_spec];
     ASInsetLayoutSpec *location_text_spec =
     [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(10, 10, 10, 10)
                                            child:self.location];
     
     ASStackLayoutSpec *location_spec = [ASStackLayoutSpec horizontalStackLayoutSpec];
-    location_spec.children = @[location_icon_spec, location_text_spec];
+    location_spec.children = @[ver, location_text_spec];
     
     // horizontal separator
     ASInsetLayoutSpec *h_separator_spec =
@@ -123,6 +132,7 @@
                               self.rejected];
     button_spec.justifyContent = ASStackLayoutJustifyContentSpaceAround;
     
+    
     ASInsetLayoutSpec *btn_inset_spec =
     [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2) child:button_spec];
     
@@ -136,8 +146,9 @@
 - (ASTextNode *)date
 {
     if (!_date) {
-        _date = [[ASTextNode alloc] init];
-        _date.truncationMode = NSLineBreakByWordWrapping;
+        ASTextNode *node = [[ASTextNode alloc] init];
+        
+        _date = node;
     }
     
     return _date;
@@ -146,8 +157,9 @@
 - (ASTextNode *)location
 {
     if (!_location) {
-        _location = [[ASTextNode alloc] init];
-        _location.truncationMode = NSLineBreakByWordWrapping;
+        ASTextNode *node = [[ASTextNode alloc] init];
+        
+        _location = node;
     }
     
     return _location;
