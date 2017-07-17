@@ -13,6 +13,7 @@
 		DA11B3BE1F1C56F00024E841 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA11B3BC1F1C56F00024E841 /* Main.storyboard */; };
 		DA11B3C01F1C56F00024E841 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA11B3BF1F1C56F00024E841 /* Assets.xcassets */; };
 		DA11B3C31F1C56F00024E841 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA11B3C11F1C56F00024E841 /* LaunchScreen.storyboard */; };
+		DA1DF7091F1C629700228D0C /* NEConferenceInvitationCellNode.m in Sources */ = {isa = PBXBuildFile; fileRef = DA1DF7081F1C629700228D0C /* NEConferenceInvitationCellNode.m */; };
 		E2DBEC80B2CAEB98DFB75BF3 /* libPods-ASDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E51B78C1D2622C36C84CDA52 /* libPods-ASDemo.a */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,8 @@
 		DA11B3BF1F1C56F00024E841 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DA11B3C21F1C56F00024E841 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DA11B3C41F1C56F00024E841 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA1DF7071F1C629700228D0C /* NEConferenceInvitationCellNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEConferenceInvitationCellNode.h; sourceTree = "<group>"; };
+		DA1DF7081F1C629700228D0C /* NEConferenceInvitationCellNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NEConferenceInvitationCellNode.m; sourceTree = "<group>"; };
 		E51B78C1D2622C36C84CDA52 /* libPods-ASDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ASDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDF3BB7265BA27A6134E348B /* Pods-ASDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ASDemo/Pods-ASDemo.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,6 +85,8 @@
 				DA11B3C11F1C56F00024E841 /* LaunchScreen.storyboard */,
 				DA11B3C41F1C56F00024E841 /* Info.plist */,
 				DA11B3B31F1C56F00024E841 /* Supporting Files */,
+				DA1DF7071F1C629700228D0C /* NEConferenceInvitationCellNode.h */,
+				DA1DF7081F1C629700228D0C /* NEConferenceInvitationCellNode.m */,
 			);
 			path = ASDemo;
 			sourceTree = "<group>";
@@ -227,6 +232,7 @@
 			files = (
 				DA11B3BB1F1C56F00024E841 /* ViewController.m in Sources */,
 				DA11B3B81F1C56F00024E841 /* AppDelegate.m in Sources */,
+				DA1DF7091F1C629700228D0C /* NEConferenceInvitationCellNode.m in Sources */,
 				DA11B3B51F1C56F00024E841 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,6 +392,7 @@
 				DA11B3C91F1C56F00024E841 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

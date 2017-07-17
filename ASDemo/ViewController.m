@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 
+#import "NEConferenceInvitationCellNode.h"
+
 #import <Masonry.h>
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 
@@ -43,13 +45,15 @@
 
 - (NSInteger)tableNode:(ASTableNode *)tableNode numberOfRowsInSection:(NSInteger)section
 {
-    return 10;
+    return 100;
 }
 
 - (ASCellNode *)tableNode:(ASTableNode *)tableNode nodeForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ASTextCellNode *node = [[ASTextCellNode alloc] init];
-    node.text = [NSString stringWithFormat:@"Hi, TextNode[%@].", @(indexPath.row)];
+    NEConferenceInvitationCellNode *node =
+    [[NEConferenceInvitationCellNode alloc] initWithDate:@"2017-7-16 17:00 - 18:00"
+                                                location:@"浙江省杭州市滨江区网商路599号网易大厦B-3-10号会议室"
+                                                  status:0];
     
     return node;
 }
