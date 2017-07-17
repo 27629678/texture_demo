@@ -1,4 +1,5 @@
 PODS:
+  - Masonry (1.0.2)
   - PINCache (3.0.1-beta.5):
     - PINCache/Arc-exception-safe (= 3.0.1-beta.5)
     - PINCache/Core (= 3.0.1-beta.5)
@@ -23,14 +24,16 @@ PODS:
     - Texture/Core
 
 DEPENDENCIES:
+  - Masonry
   - Texture
 
 SPEC CHECKSUMS:
+  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
   PINCache: 98e7b1ef782824ad231ade51987c218b758c30d8
   PINOperation: ac23db44796d4a564ecf9b5ea7163510f579b71d
   PINRemoteImage: d71988f11914a050d6d4cf51efc4ad1de8c0a9d8
   Texture: 8cf0872fe33328c20d7e6c1fcbf1f23a82162f2f
 
-PODFILE CHECKSUM: f302e36a89dc22c626edfb0446504de93c266d6d
+PODFILE CHECKSUM: fd5c23e0e12bca5c6eb704cfe210bb3335fbeeb5
 
 COCOAPODS: 1.0.1

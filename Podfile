@@ -7,4 +7,5 @@ target 'ASDemo' do
 
   # Pods for ASDemo
   pod 'Texture'
+  pod 'Masonry'
 end

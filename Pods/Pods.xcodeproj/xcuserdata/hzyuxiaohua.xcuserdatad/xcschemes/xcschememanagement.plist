@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Masonry.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>PINCache.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -31,6 +36,37 @@
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
-	<dict/>
+	<dict>
+		<key>3FC3B74DBFA24DFCA4B2DB946D7F86D4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>61C01273AEF0796478030795FA54533E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7020FA468B15664DBD673D04AD8E5C33</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7A9492F0C84610C72141FFB341D7820D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9DC8D9E02903E93BD0B2FEC9D846EA20</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DE689CAE8DD656C32DF75630C09FA386</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
 </dict>
 </plist>
