@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 
+#import <Masonry.h>
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 
 @interface ViewController () <ASTableDelegate, ASTableDataSource>
@@ -28,7 +29,9 @@
     [self.tableNode setDataSource:self];
     [self.view addSubview:self.tableNode.view];
     
-    
+    [self.tableNode.view mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
 }
 
 #pragma mark - delegate & data source methods
@@ -46,9 +49,14 @@
 - (ASCellNode *)tableNode:(ASTableNode *)tableNode nodeForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ASTextCellNode *node = [[ASTextCellNode alloc] init];
-    node.text = @"Hi, TextNode.";
+    node.text = [NSString stringWithFormat:@"Hi, TextNode[%@].", @(indexPath.row)];
     
     return node;
+}
+
+- (void)tableNode:(ASTableNode *)tableNode didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableNode deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 @end
