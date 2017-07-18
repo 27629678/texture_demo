@@ -53,7 +53,7 @@
     NEConferenceInvitationCellNode *node =
     [[NEConferenceInvitationCellNode alloc] initWithDate:@"2017-7-16 17:00 - 18:00"
                                                 location:@"浙江省杭州市滨江区网商路599号网易大厦B-3-10号会议室"
-                                                  status:0];
+                                                  status:arc4random_uniform(4)];
     
     return node;
 }

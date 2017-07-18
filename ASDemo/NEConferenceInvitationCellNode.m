@@ -31,6 +31,10 @@
 @property (nonatomic, strong) ASImageNode *horizontal_separator;
 @property (nonatomic, assign) NEConferenceInvitationStatus status;
 
+// status
+@property (nonatomic, strong) ASImageNode *status_icon;
+@property (nonatomic, strong) ASTextNode *status_description;
+
 @end
 
 @implementation NEConferenceInvitationCellNode
@@ -38,15 +42,11 @@
 - (instancetype)initWithDate:(NSString *)date location:(NSString *)location status:(NSUInteger)status
 {
     if (self = [super init]) {
-        NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-        UIFont *font = [UIFont systemFontOfSize:18 weight:UIFontWeightLight];
-        NSDictionary *attr = @{ NSFontAttributeName: font, NSParagraphStyleAttributeName: style };
-        
         self.status = status;
         self.shouldDisplayControllerButton = YES;
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.date.attributedText = [[NSAttributedString alloc] initWithString:date attributes:attr];
-        self.location.attributedText = [[NSAttributedString alloc] initWithString:location attributes:attr];
+        self.date.attributedText = [self attributedString:date];
+        self.location.attributedText = [self attributedString:location];
     }
     
     return self;
@@ -69,19 +69,13 @@
     [self addSubnode:self.location_icon];
     [self addSubnode:self.location];
     
-    if (_shouldDisplayControllerButton) {
-        // horizontal separator
-        [self addSubnode:self.horizontal_separator];
-        
-        // vertical separators
-        [self addSubnode:self.vertical_separator1];
-        [self addSubnode:self.vertical_separator2];
-        
-        // buttons
-        [self addSubnode:self.accept];
-        [self addSubnode:self.pending];
-        [self addSubnode:self.rejected];
+    if (!self.shouldDisplayControllerButton) {
+        return;
     }
+    
+    // horizontal separator
+    [self addSubnode:self.horizontal_separator];
+    [self addSubnodeWithStatus:self.status];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
@@ -132,26 +126,59 @@
     location_spec.children = @[ver, location_text_spec];
     [children addObject:location_spec];
     
-    if (_shouldDisplayControllerButton) {
-        // horizontal separator
-        ASInsetLayoutSpec *h_separator_spec =
-        [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2)
-                                               child:self.horizontal_separator];
+    if (!_shouldDisplayControllerButton) {
+        container.children = children;
         
-        // buttons
-        ASStackLayoutSpec *button_spec = [ASStackLayoutSpec horizontalStackLayoutSpec];
-        button_spec.children = @[ self.accept,
-                                  self.vertical_separator1,
-                                  self.pending,
-                                  self.vertical_separator2,
-                                  self.rejected];
-        button_spec.justifyContent = ASStackLayoutJustifyContentSpaceAround;
-        
-        
-        ASInsetLayoutSpec *btn_inset_spec =
-        [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2) child:button_spec];
-        
-        [children addObjectsFromArray:@[h_separator_spec, btn_inset_spec]];
+        return spec;
+    }
+    
+    // horizontal separator
+    ASInsetLayoutSpec *h_separator_spec =
+    [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2)
+                                           child:self.horizontal_separator];
+    [children addObject:h_separator_spec];
+    
+    switch (self.status) {
+        case NEConferenceInvitationStatusUnknown: {
+            // buttons
+            ASStackLayoutSpec *button_spec = [ASStackLayoutSpec horizontalStackLayoutSpec];
+            button_spec.children = @[ self.accept,
+                                      self.vertical_separator1,
+                                      self.pending,
+                                      self.vertical_separator2,
+                                      self.rejected];
+            button_spec.justifyContent = ASStackLayoutJustifyContentSpaceAround;
+            
+            
+            ASInsetLayoutSpec *btn_inset_spec =
+            [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2) child:button_spec];
+            [children addObject:btn_inset_spec];
+        }
+            
+            break;
+            
+        default: {
+            ASInsetLayoutSpec *status_icon_inset_spec =
+            [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(3, 0, 0, 0) child:self.status_icon];
+            ASCenterLayoutSpec *status_icon_center_spec =
+            [ASCenterLayoutSpec centerLayoutSpecWithCenteringOptions:ASCenterLayoutSpecCenteringXY
+                                                       sizingOptions:ASCenterLayoutSpecSizingOptionDefault
+                                                               child:status_icon_inset_spec];
+            ASStackLayoutSpec *status_icon_stack_spec = [ASStackLayoutSpec verticalStackLayoutSpec];
+            status_icon_stack_spec.child = status_icon_center_spec;
+            
+            ASStackLayoutSpec *inner_stack_spec = [ASStackLayoutSpec horizontalStackLayoutSpec];
+            inner_stack_spec.children = @[status_icon_stack_spec, self.status_description];
+            inner_stack_spec.spacing = 5;
+            
+            ASCenterLayoutSpec *status_sepc =
+            [ASCenterLayoutSpec centerLayoutSpecWithCenteringOptions:ASCenterLayoutSpecCenteringXY
+                                                       sizingOptions:ASCenterLayoutSpecSizingOptionDefault
+                                                               child:inner_stack_spec];
+            [children addObject:status_sepc];
+        }
+            
+            break;
     }
     
     container.children = children;
@@ -307,21 +334,106 @@
     return _rejected;
 }
 
+- (ASImageNode *)status_icon
+{
+    if (!_status_icon) {
+        _status_icon = [[ASImageNode alloc] init];
+    }
+    
+    return _status_icon;
+}
+
+- (ASTextNode *)status_description
+{
+    if (!_status_description) {
+        _status_description = [[ASTextNode alloc] init];
+    }
+    
+    return _status_description;
+}
+
 #pragma mark - private
+
+- (NSAttributedString *)attributedString:(NSString *)string
+{
+    static NSDictionary *__attr = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+        UIFont *font = [UIFont systemFontOfSize:18 weight:UIFontWeightLight];
+        __attr = @{ NSFontAttributeName: font, NSParagraphStyleAttributeName: style };
+    });
+    
+    return [[NSAttributedString alloc] initWithString:string attributes:__attr];
+}
+
+- (void)addSubnodeWithStatus:(NEConferenceInvitationStatus)status
+{
+    if (!self.shouldDisplayControllerButton) {
+        return;
+    }
+    
+    [self.accept removeFromSupernode];
+    [self.pending removeFromSupernode];
+    [self.rejected removeFromSupernode];
+    [self.vertical_separator1 removeFromSupernode];
+    [self.vertical_separator2 removeFromSupernode];
+    
+    [self.status_icon removeFromSupernode];
+    [self.status_description removeFromSupernode];
+    
+    switch (status) {
+        case NEConferenceInvitationStatusUnknown:
+            // vertical separators
+            [self addSubnode:self.vertical_separator1];
+            [self addSubnode:self.vertical_separator2];
+            
+            // buttons
+            [self addSubnode:self.accept];
+            [self addSubnode:self.pending];
+            [self addSubnode:self.rejected];
+            
+            return;
+            
+        case NEConferenceInvitationStatusAccept:
+            self.status_icon.image = [UIImage imageNamed:@"accept"];
+            self.status_description.attributedText = [self attributedString:kCI_AcceptDescription];
+            break;
+            
+        case NEConferenceInvitationStatusPending:
+            self.status_icon.image = [UIImage imageNamed:@"pending"];
+            self.status_description.attributedText = [self attributedString:kCI_PendingDescription];
+            break;
+            
+        case NEConferenceInvitationStatusRejected:
+            self.status_icon.image = [UIImage imageNamed:@"rejected"];
+            self.status_description.attributedText = [self attributedString:kCI_RejectedDescription];
+            break;
+    }
+    
+    [self addSubnode:self.status_icon];
+    [self addSubnode:self.status_description];
+}
 
 - (void)doAcceptAction
 {
-    NSLog(@"Accept");
+    self.status = NEConferenceInvitationStatusAccept;
+    [self addSubnodeWithStatus:NEConferenceInvitationStatusAccept];
+    [self layoutIfNeeded];
 }
 
 - (void)doPendingAction
 {
-    NSLog(@"Pending");
+    self.status = NEConferenceInvitationStatusPending;
+    [self addSubnodeWithStatus:NEConferenceInvitationStatusPending];
+    [self layoutIfNeeded];
 }
 
 - (void)doRejectedAction
 {
-    NSLog(@"Rejected");
+    self.status = NEConferenceInvitationStatusRejected;
+    [self addSubnodeWithStatus:NEConferenceInvitationStatusRejected];
+    [self layoutIfNeeded];
 }
 
 @end
