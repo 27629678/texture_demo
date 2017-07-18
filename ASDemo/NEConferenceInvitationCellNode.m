@@ -8,6 +8,14 @@
 
 #import "NEConferenceInvitationCellNode.h"
 
+#define kCI_AcceptBtnTitle          NSLocalizedString(@"授受", @"")
+#define kCI_PendingBtnTitle         NSLocalizedString(@"暂定", @"")
+#define kCI_RejectedBtnTitle        NSLocalizedString(@"拒绝", @"")
+
+#define kCI_AcceptDescription       NSLocalizedString(@"你已接受本次会议邀请", @"")
+#define kCI_PendingDescription      NSLocalizedString(@"你已暂时接受本次会议邀请", @"")
+#define kCI_RejectedDescription     NSLocalizedString(@"你已谢绝本次会议邀请", @"")
+
 @interface NEConferenceInvitationCellNode ()
 
 @property (nonatomic, strong) ASTextNode *date;
@@ -35,6 +43,7 @@
         NSDictionary *attr = @{ NSFontAttributeName: font, NSParagraphStyleAttributeName: style };
         
         self.status = status;
+        self.shouldDisplayControllerButton = YES;
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.date.attributedText = [[NSAttributedString alloc] initWithString:date attributes:attr];
         self.location.attributedText = [[NSAttributedString alloc] initWithString:location attributes:attr];
@@ -60,21 +69,24 @@
     [self addSubnode:self.location_icon];
     [self addSubnode:self.location];
     
-    // horizontal separator
-    [self addSubnode:self.horizontal_separator];
-    
-    // vertical separators
-    [self addSubnode:self.vertical_separator1];
-    [self addSubnode:self.vertical_separator2];
-    
-    // buttons
-    [self addSubnode:self.accept];
-    [self addSubnode:self.pending];
-    [self addSubnode:self.rejected];
+    if (_shouldDisplayControllerButton) {
+        // horizontal separator
+        [self addSubnode:self.horizontal_separator];
+        
+        // vertical separators
+        [self addSubnode:self.vertical_separator1];
+        [self addSubnode:self.vertical_separator2];
+        
+        // buttons
+        [self addSubnode:self.accept];
+        [self addSubnode:self.pending];
+        [self addSubnode:self.rejected];
+    }
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
+    NSMutableArray *children = [NSMutableArray array];
     ASStackLayoutSpec *container = [ASStackLayoutSpec verticalStackLayoutSpec];
     
     // background
@@ -103,6 +115,7 @@
     
     ASStackLayoutSpec *date_spec = [ASStackLayoutSpec horizontalStackLayoutSpec];
     date_spec.children = @[date_icon_spec, date_text_spec];
+    [children addObject:date_spec];
     
     // location
     self.location.style.maxWidth = ASDimensionMake(constrainedSize.max.width - 60);
@@ -117,26 +130,31 @@
     
     ASStackLayoutSpec *location_spec = [ASStackLayoutSpec horizontalStackLayoutSpec];
     location_spec.children = @[ver, location_text_spec];
+    [children addObject:location_spec];
     
-    // horizontal separator
-    ASInsetLayoutSpec *h_separator_spec =
-    [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2)
-                                           child:self.horizontal_separator];
+    if (_shouldDisplayControllerButton) {
+        // horizontal separator
+        ASInsetLayoutSpec *h_separator_spec =
+        [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2)
+                                               child:self.horizontal_separator];
+        
+        // buttons
+        ASStackLayoutSpec *button_spec = [ASStackLayoutSpec horizontalStackLayoutSpec];
+        button_spec.children = @[ self.accept,
+                                  self.vertical_separator1,
+                                  self.pending,
+                                  self.vertical_separator2,
+                                  self.rejected];
+        button_spec.justifyContent = ASStackLayoutJustifyContentSpaceAround;
+        
+        
+        ASInsetLayoutSpec *btn_inset_spec =
+        [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2) child:button_spec];
+        
+        [children addObjectsFromArray:@[h_separator_spec, btn_inset_spec]];
+    }
     
-    // buttons
-    ASStackLayoutSpec *button_spec = [ASStackLayoutSpec horizontalStackLayoutSpec];
-    button_spec.children = @[ self.accept,
-                              self.vertical_separator1,
-                              self.pending,
-                              self.vertical_separator2,
-                              self.rejected];
-    button_spec.justifyContent = ASStackLayoutJustifyContentSpaceAround;
-    
-    
-    ASInsetLayoutSpec *btn_inset_spec =
-    [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 2, 5, 2) child:button_spec];
-    
-    container.children = @[date_spec, location_spec, h_separator_spec, btn_inset_spec];
+    container.children = children;
     
     return spec;
 }
@@ -245,8 +263,8 @@
         node.contentSpacing = 5;
         [node setImage:[UIImage imageNamed:@"accept"] forState:UIControlStateNormal];
         [node setImage:[UIImage imageNamed:@"accept"] forState:UIControlStateHighlighted];
-        [node setTitle:@"Accept" withFont:nil withColor:nil forState:UIControlStateNormal];
-        [node setTitle:@"Accept" withFont:nil withColor:nil forState:UIControlStateHighlighted];
+        [node setTitle:kCI_AcceptBtnTitle withFont:nil withColor:nil forState:UIControlStateNormal];
+        [node setTitle:kCI_AcceptBtnTitle withFont:nil withColor:nil forState:UIControlStateHighlighted];
         [node addTarget:self action:@selector(doAcceptAction) forControlEvents:ASControlNodeEventTouchUpInside];
         
         _accept = node;
@@ -262,8 +280,8 @@
         node.contentSpacing = 5;
         [node setImage:[UIImage imageNamed:@"pending"] forState:UIControlStateNormal];
         [node setImage:[UIImage imageNamed:@"pending"] forState:UIControlStateHighlighted];
-        [node setTitle:@"Pending" withFont:nil withColor:nil forState:UIControlStateNormal];
-        [node setTitle:@"Pending" withFont:nil withColor:nil forState:UIControlStateHighlighted];
+        [node setTitle:kCI_PendingBtnTitle withFont:nil withColor:nil forState:UIControlStateNormal];
+        [node setTitle:kCI_PendingBtnTitle withFont:nil withColor:nil forState:UIControlStateHighlighted];
         [node addTarget:self action:@selector(doPendingAction) forControlEvents:ASControlNodeEventTouchUpInside];
         
         _pending = node;
@@ -279,8 +297,8 @@
         node.contentSpacing = 5;
         [node setImage:[UIImage imageNamed:@"rejected"] forState:UIControlStateNormal];
         [node setImage:[UIImage imageNamed:@"rejected"] forState:UIControlStateHighlighted];
-        [node setTitle:@"Rejected" withFont:nil withColor:nil forState:UIControlStateNormal];
-        [node setTitle:@"Rejected" withFont:nil withColor:nil forState:UIControlStateHighlighted];
+        [node setTitle:kCI_RejectedBtnTitle withFont:nil withColor:nil forState:UIControlStateNormal];
+        [node setTitle:kCI_RejectedBtnTitle withFont:nil withColor:nil forState:UIControlStateHighlighted];
         [node addTarget:self action:@selector(doRejectedAction) forControlEvents:ASControlNodeEventTouchUpInside];
         
         _rejected = node;
