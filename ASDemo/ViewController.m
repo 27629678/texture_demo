@@ -27,6 +27,7 @@
     
     self.title = @"Demo";
     self.tableNode = [[ASTableNode alloc] initWithStyle:UITableViewStylePlain];
+    self.tableNode.view.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.tableNode setDelegate:self];
     [self.tableNode setDataSource:self];
     [self.view addSubview:self.tableNode.view];
@@ -45,7 +46,7 @@
 
 - (NSInteger)tableNode:(ASTableNode *)tableNode numberOfRowsInSection:(NSInteger)section
 {
-    return 100;
+    return 200;
 }
 
 - (ASCellNode *)tableNode:(ASTableNode *)tableNode nodeForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -53,7 +54,7 @@
     NEConferenceInvitationCellNode *node =
     [[NEConferenceInvitationCellNode alloc] initWithDate:@"2017-7-16 17:00 - 18:00"
                                                 location:@"浙江省杭州市滨江区网商路599号网易大厦B-3-10号会议室"
-                                                  status:arc4random_uniform(4)];
+                                                  status:arc4random_uniform(5)];
     
     return node;
 }

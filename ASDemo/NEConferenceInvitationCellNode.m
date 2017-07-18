@@ -15,6 +15,7 @@
 #define kCI_AcceptDescription       NSLocalizedString(@"你已接受本次会议邀请", @"")
 #define kCI_PendingDescription      NSLocalizedString(@"你已暂时接受本次会议邀请", @"")
 #define kCI_RejectedDescription     NSLocalizedString(@"你已谢绝本次会议邀请", @"")
+#define kCI_ExpiredDescription      NSLocalizedString(@"本次会议邀请已过期", @"")
 
 @interface NEConferenceInvitationCellNode ()
 
@@ -409,6 +410,11 @@
             self.status_icon.image = [UIImage imageNamed:@"rejected"];
             self.status_description.attributedText = [self attributedString:kCI_RejectedDescription];
             break;
+            
+        case NEConferenceInvitationStatusExpired:
+            self.status_icon.image = [UIImage imageNamed:@"expired"];
+            self.status_description.attributedText = [self attributedString:kCI_ExpiredDescription];
+            break;
     }
     
     [self addSubnode:self.status_icon];
@@ -419,21 +425,21 @@
 {
     self.status = NEConferenceInvitationStatusAccept;
     [self addSubnodeWithStatus:NEConferenceInvitationStatusAccept];
-    [self layoutIfNeeded];
+    [self setNeedsLayout];
 }
 
 - (void)doPendingAction
 {
     self.status = NEConferenceInvitationStatusPending;
     [self addSubnodeWithStatus:NEConferenceInvitationStatusPending];
-    [self layoutIfNeeded];
+    [self setNeedsLayout];
 }
 
 - (void)doRejectedAction
 {
     self.status = NEConferenceInvitationStatusRejected;
     [self addSubnodeWithStatus:NEConferenceInvitationStatusRejected];
-    [self layoutIfNeeded];
+    [self setNeedsLayout];
 }
 
 @end

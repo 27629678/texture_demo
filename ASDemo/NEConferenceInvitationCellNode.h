@@ -13,6 +13,7 @@ typedef NS_ENUM(NSUInteger, NEConferenceInvitationStatus) {
     NEConferenceInvitationStatusAccept,
     NEConferenceInvitationStatusPending,
     NEConferenceInvitationStatusRejected,
+    NEConferenceInvitationStatusExpired
 };
 
 @interface NEConferenceInvitationCellNode : ASCellNode
